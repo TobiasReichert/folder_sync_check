@@ -1,6 +1,6 @@
 import sys
 import os
-
+import argparse
 
 class File(object):
 
@@ -28,18 +28,28 @@ def walk_through_dir(root_dir, filelist):
             walk_through_dir(subdir, filelist)
 
 def main():
+
+    
+    arg_p = argparse.ArgumentParser(
+        description="####  Folder sync checker  #####")
+    arg_p.add_argument("src", help="Path to the Sorce") 
+    arg_p.add_argument("dest", help="Path to the Destination") 
+    arg_p.add_argument("-c", "--copy",
+        help="Copys the missing files in a unsorted<date> folder in dest", action="store_true")
+    args = arg_p.parse_args()
+
     if len(sys.argv) != 3:
         print("Folder sync check \n Usage: python main.py <folder1> <folder2>")
         exit(-1)
     
-    print("Scanning " + sys.argv[1] + "...")
+    print("Scanning " + args.src + "...")
     filelist_dir1 = []
-    walk_through_dir(sys.argv[1], filelist_dir1)
+    walk_through_dir(args.src, filelist_dir1)
     print("Finished. Found " + str(len(filelist_dir1)) + " files") 
 
-    print("Scanning " + sys.argv[2] + "...")
+    print("Scanning " + args.dest + "...")
     filelist_dir2 = []
-    walk_through_dir(sys.argv[2], filelist_dir2)
+    walk_through_dir(args.dest, filelist_dir2)
     print("Finished. Found " + str(len(filelist_dir2)) + " files") 
 
     files_missing = []
