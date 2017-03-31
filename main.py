@@ -1,6 +1,9 @@
 import sys
 import os
 import argparse
+import time
+import shutil
+
 
 class File(object):
 
@@ -32,16 +35,12 @@ def main():
     
     arg_p = argparse.ArgumentParser(
         description="####  Folder sync checker  #####")
-    arg_p.add_argument("src", help="Path to the Sorce") 
-    arg_p.add_argument("dest", help="Path to the Destination") 
     arg_p.add_argument("-c", "--copy",
         help="Copys the missing files in a unsorted<date> folder in dest", action="store_true")
+    arg_p.add_argument("src", help="Path to the Sorce") 
+    arg_p.add_argument("dest", help="Path to the Destination") 
     args = arg_p.parse_args()
 
-    if len(sys.argv) != 3:
-        print("Folder sync check \n Usage: python main.py <folder1> <folder2>")
-        exit(-1)
-    
     print("Scanning " + args.src + "...")
     filelist_dir1 = []
     walk_through_dir(args.src, filelist_dir1)
@@ -65,5 +64,14 @@ def main():
     print(str(len(files_missing)) + " missing files")
     print("\n")
     print(files_missing)
+
+    if args.copy:
+        dest_folder = os.path.join(args.dest, "unsorted" + str(time.strftime("%Y%m%d")))
+        print("Copying to " + dest_folder + "...")
+        if not os.path.exists(dest_folder):
+                os.makedirs(dest_folder)
+        for file in files_missing:
+            shutil.copy2(file.path, dest_folder)
+
 if __name__ == "__main__":
     main()
